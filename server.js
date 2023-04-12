@@ -1,9 +1,22 @@
+require("dotenv").config();
+require("./backend/config/db");
+
 const express = require("express");
 const path = require("path");
 const favicon = require("serve-favicon");
 const logger = require("morgan");
+const cors = require("cors");
+
+const methodOverride = require("method-override");
 
 const app = express();
+
+var corsOptions = {
+  origin: "http://localhost:3000",
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -24,6 +37,17 @@ app.get("/api", (req, res) => {
 app.get("/*", function (req, res) {
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });
+
+const setupMiddleware = require("./middleware/setupMiddleware");
+
+setupMiddleware(app);
+app.use(methodOverride("_method"));
+
+const humanController = require("./controllers/humanController");
+const userController = require("./controllers/userController");
+
+app.use("/humans", humanController);
+app.use("/user", userController);
 
 // Configure to use port 3001 instead of 3000 during
 // development to avoid collision with React's dev server
