@@ -14,10 +14,10 @@ async function basicAuth(req, res, next) {
       res.locals.data.user = verified;
       next();
     } else {
-      return res.status(401).json({ error: "Nah I cant help you..." });
+      return res.status(401).json({ error: "Unauthorized" });
     }
   } catch (error) {
-    return res.status(401).json({ error: "Nah I cant help you..." });
+    return res.status(401).json({ error: "Unauthorized" });
   }
 }
 

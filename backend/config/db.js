@@ -3,15 +3,11 @@ Database Setup
 ******/
 const mongoose = require("mongoose");
 
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const db = process.env.MONGO_URI;
 
-const db = mongoose.connection;
+mongoose
+  .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("MongoDB connected..."))
+  .catch((err) => console.log(err));
 
-db.on("connected", function () {
-  console.log(` ${db.name} at ${db.host}:${db.port}`);
-});
-
-module.exports = db;
+module.exports = mongoose.connection;

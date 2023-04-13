@@ -7,7 +7,7 @@ const favicon = require("serve-favicon");
 const logger = require("morgan");
 const cors = require("cors");
 
-const methodOverride = require("method-override");
+// const methodOverride = require("method-override");
 
 const app = express();
 
@@ -28,26 +28,26 @@ app.use(express.static(path.join(__dirname, "build")));
 
 // Put API routes here, before the "catch all" route
 
-app.get("/api", (req, res) => {
-  res.json({ message: "The API is alive!!!" });
-});
-
 // The following "catch all" route (note the *) is necessary
 // to return the index.html on all non-AJAX requests
 app.get("/*", function (req, res) {
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
-const setupMiddleware = require("./middleware/setupMiddleware");
+// const setupMiddleware = require("./middleware/setupMiddleware");
 
-setupMiddleware(app);
-app.use(methodOverride("_method"));
+// setupMiddleware(app);
+// app.use(methodOverride("_method"));
 
-const humanController = require("./controllers/humanController");
-const userController = require("./controllers/userController");
+const humanController = require("./backend/controllers/humanController");
+const userController = require("./backend/controllers/userController");
 
 app.use("/humans", humanController);
 app.use("/user", userController);
+
+app.get("/", (req, res) => {
+  res.redirect("/humans/");
+});
 
 // Configure to use port 3001 instead of 3000 during
 // development to avoid collision with React's dev server
