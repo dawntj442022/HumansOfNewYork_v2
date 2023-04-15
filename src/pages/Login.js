@@ -1,47 +1,50 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import axios from "axios";
+import { useUserStore } from "../store";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const history = useHistory();
+  const { login } = useUserStore();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/user/login", {
-        username,
-        password,
-      });
-      localStorage.setItem("token", response.data.token);
-      history.push("/blog");
-    } catch (error) {
-      console.error(error);
+      await login(formData);
+      history.push("/");
+    } catch (err) {
+      setErrorMessage("Invalid email or password");
+      console.error(err);
     }
   };
 
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   return (
-    <form onSubmit={handleLogin}>
-      <h2>Login</h2>
-      <label>
-        Username:
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </label>
-      <label>
-        Passwords:
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </label>
-      <button type="submit">Login</button>
-    </form>
+    <div>
+      <h1>Login</h1>
+      {errorMessage && <p>{errorMessage}</p>}
+      <form onSubmit={handleSubmit}>
+        <label>
+          Email:
+          <input type="email" name="email" onChange={handleChange} />
+        </label>
+        <label>
+          Password:
+          <input type="password" name="password" onChange={handleChange} />
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
   );
 };
 
